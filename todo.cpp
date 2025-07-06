@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
                 todolist.printTodos(filter);
             }
             else {
-                std::cout << "Usage: todo list <done|todo|in-progress| >";
+                std::cout << "Usage: todo list <done|todo|in-progress| >\n";
                 break;
             }
 
@@ -294,13 +294,13 @@ int main(int argc, char* argv[]) {
 void help() {
     std::cout << "Usage: todo [command] [options]\n";
     std::cout << "Commands:\n";
-    std::cout << "  add <title>        Add a new todo item\n";
-    std::cout << "  list               List all todo items\n";
-    std::cout << "  check <index>      Mark a todo item as done\n";
-    std::cout << "  uncheck <index>    Mark a todo item as not done\n";
-    std::cout << "  remove <index|all> Remove a todo item\n";
-    std::cout << "  edit <index>       Edit todo at the index\n";
-    std::cout << "  start <index>      Start the specified todo\n";
-    std::cout << "  x                  Clear all todo items\n";
-    std::cout << "  help               Show this help message\n";
+    std::cout << "  add <title>                      Add a new todo item\n";
+    std::cout << "  list <done|in-progress|todo| >   List all todo items \n";
+    std::cout << "  check <index>                    Mark a todo item as done\n";
+    std::cout << "  uncheck <index>                  Mark a todo item as not done\n";
+    std::cout << "  remove <index>                   Remove a todo item\n";
+    std::cout << "  edit <index>                     Edit todo at the index\n";
+    std::cout << "  start <index>                    Start the specified todo\n";
+    std::cout << "  x                                Clear all todo items\n";
+    std::cout << "  help                             Show this help message\n";
 }

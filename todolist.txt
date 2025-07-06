@@ -1,5 +1,3 @@
-0|Wash Clothes|todo
-1|[9mWash Clothes[0m|done
-0|Wash Clothes|todo
-0|Wash Clothes|todo
-1|[9mWash Clothes[0m|done
+1|[9mMake An awsome list[0m|done
+0|Wash your car|in-progress
+1|[9mGo have fun[0m|done
