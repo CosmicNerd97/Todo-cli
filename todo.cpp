@@ -3,7 +3,7 @@
 #include <sstream>
 #include <algorithm>
 
-const std::string SAVE = "/home/halil/Documents/CLI/todolist.txt";
+const std::string SAVE = "PATH TO SAVE FILE";
 
 class Todo {
 public:
@@ -25,6 +25,7 @@ public:
         status = "in-progress";
     }
     void check() {
+        if (isDone == 1) return;
         isDone = true;
         title = "\033[9m" + title + "\033[0m";
         checkMark = "[x]";
@@ -104,7 +105,7 @@ public:
     void saveToFile(const std::string& filename) {
         std::ofstream file(filename);
         for (int i = 0; i < count; ++i) {
-            file << todos[i].isDone << "|" << todos[i].title << "|" << todos[i].status << "\n";
+            file << (todos[i].isDone ? "1" : "0") << "|" << todos[i].title << "|" << todos[i].status << "\n";
         }
     }
 
