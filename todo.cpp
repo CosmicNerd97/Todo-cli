@@ -12,13 +12,16 @@ public:
     std::string description = "";
     std::string checkMark = "[ ]";
 
-
     Todo() {
         title = "";
     }
 
     Todo(std::string title) {
         this->title = title;
+    }
+
+    void start() {
+        status = "In Progress";
     }
     void check() {
         isDone = true;
@@ -58,6 +61,19 @@ public:
         }
         this->printTodos();
     }
+
+    Todo* getTodos() {
+        return this->todos;
+    }
+
+    Todo& getTodo(int index) {
+        return todos[index];
+    }
+
+    void startTodo(int i) {
+        getTodo(i).start();
+    }
+
     void setTodos(Todo* todos, int count) {
         this->count = count;
         for (int i = 0; i < count; ++i) {
@@ -79,7 +95,7 @@ public:
     void saveToFile(const std::string& filename) {
         std::ofstream file(filename);
         for (int i = 0; i < count; ++i) {
-            file << todos[i].isDone << "|" << todos[i].title << "\n";
+            file << todos[i].isDone << "|" << todos[i].title << "|" << todos[i].status << "\n";
         }
     }
 
@@ -89,10 +105,11 @@ public:
         count = 0;
         while (std::getline(file, line) && count < 10) {
             std::istringstream iss(line);
-            std::string doneStr, title;
-            if (std::getline(iss, doneStr, '|') && std::getline(iss, title)) {
+            std::string doneStr, title, status;
+            if (std::getline(iss, doneStr, '|') && std::getline(iss, title, '|') && std::getline(iss, status)) {
                 todos[count].isDone = (doneStr == "1");
                 todos[count].title = title;
+                todos[count].status = status;
                 count++;
             }
         }
@@ -186,6 +203,46 @@ int main(int argc, char* argv[]) {
         todolist.setTodos(nullptr, 0); // Reset the todo list
         todolist.printTodos();
         break;
+    case 'E':
+        if (argc == 3) {
+            int index = std::stoi(argv[2]);
+            if (todolist.getTodo(index - 1).empty()) {
+                std::cout << "That todo desnt exist\n";
+                std::cout << "todo add <title>";
+                break;
+            }
+            if (index > 0 && index <= 10) {
+                std::string newTitle;
+                std::cout << "Enter new title for todo " << index << ": ";
+                std::getline(std::cin, newTitle);
+                if (!newTitle.empty()) {
+                    todolist.getTodo(index - 1).title = newTitle;
+                    todolist.printTodos();
+                }
+                else {
+                    std::cout << "Title cannot be empty.\n";
+                }
+            }
+            else {
+                std::cout << "Invalid index: " << index << ". Must be between 1 and 10.\n";
+            }
+        }
+        else {
+            std::cout << "Usage: todo edit <index>\n";
+            return 1;
+        }
+        break;
+    case 'S':
+        if (argc == 3) {
+            int i = std::stoi(argv[2]);
+            todolist.startTodo(i - 1);
+            todolist.printTodos();
+        }
+        else {
+            std::cout << "Usage: todo start <index>";
+            return 1;
+        }
+        break;
     default:
         std::cout << "Unknown command: " << argv[1] << "\n";
         help();
@@ -204,5 +261,8 @@ void help() {
     std::cout << "  check <index>      Mark a todo item as done\n";
     std::cout << "  uncheck <index>    Mark a todo item as not done\n";
     std::cout << "  remove <index|all> Remove a todo item\n";
+    std::cout << "  edit <index>       Edit todo at the index\n";
+    std::cout << "  start <index>      Start the specified todo\n";
+    std::cout << "  x                  Clear all todo items\n";
     std::cout << "  help               Show this help message\n";
 }
