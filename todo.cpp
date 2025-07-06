@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 const std::string SAVE = "/home/halil/Documents/CLI/todolist.txt";
 
@@ -8,7 +9,7 @@ class Todo {
 public:
     bool isDone = false;
     std::string title;
-    std::string status = "Not Started";
+    std::string status = "todo";
     std::string description = "";
     std::string checkMark = "[ ]";
 
@@ -21,19 +22,21 @@ public:
     }
 
     void start() {
-        status = "In Progress";
+        status = "in-progress";
     }
     void check() {
         isDone = true;
         title = "\033[9m" + title + "\033[0m";
         checkMark = "[x]";
-        status = "Done !";
+        status = "done";
     }
     void uncheck() {
+        if (!isDone) return;
         isDone = false;
         title = title.erase(0, 4);
         title = title.erase(title.size() - 4, 4);
         checkMark = "[ ]";
+        status = "todo";
     }
     bool empty() {
         return title.empty();
@@ -59,7 +62,13 @@ public:
             todos[count] = Todo(title);
             count++;
         }
+        else {
+            this->printTodos();
+            std::cout << "You have reached the limit.";
+            return;
+        }
         this->printTodos();
+
     }
 
     Todo* getTodos() {
@@ -108,6 +117,7 @@ public:
             std::string doneStr, title, status;
             if (std::getline(iss, doneStr, '|') && std::getline(iss, title, '|') && std::getline(iss, status)) {
                 todos[count].isDone = (doneStr == "1");
+                todos[count].checkMark = (doneStr == "1") ? "[x]" : "[ ]";
                 todos[count].title = title;
                 todos[count].status = status;
                 count++;
@@ -121,6 +131,18 @@ public:
             std::cout << "       |                          |             \n";
             todos[i].print();
             std::cout << "\033[4m       |                          |             \033[0m\n";
+        }
+        std::cout << std::endl;
+    }
+
+    void printTodos(std::string filter) {
+        std::cout << "\n\033[4m Check | Title                    | Status      \033[0m\n";
+        for (int i = 0; i < count; i++) {
+            if (todos[i].status == filter) {
+                std::cout << "       |                          |             \n";
+                todos[i].print();
+                std::cout << "\033[4m       |                          |             \033[0m\n";
+            }
         }
         std::cout << std::endl;
     }
@@ -167,7 +189,23 @@ int main(int argc, char* argv[]) {
         help();
         break;
     case 'L':
-        todolist.printTodos();
+        if (argc == 2) {
+            todolist.printTodos();
+            break;
+        }
+        else if (argc == 3) {
+            std::string filter = argv[2];
+            std::transform(filter.begin(), filter.end(), filter.begin(),
+                [](unsigned char c) { return std::tolower(c); });
+            if (filter == "done" || filter == "todo" || filter == "in-progress") {
+                todolist.printTodos(filter);
+            }
+            else {
+                std::cout << "Usage: todo list <done|todo|in-progress| >";
+                break;
+            }
+
+        }
         break;
     case 'A':
         if (argc == 3) {
