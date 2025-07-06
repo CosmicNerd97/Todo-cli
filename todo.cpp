@@ -8,31 +8,40 @@ class Todo {
 public:
     bool isDone = false;
     std::string title;
+    std::string status = "Not Started";
+    std::string description = "";
+    std::string checkMark = "[ ]";
+
 
     Todo() {
         title = "";
     }
 
     Todo(std::string title) {
-        this->title = "[ ] " + title;
+        this->title = title;
     }
-
     void check() {
         isDone = true;
-        title = title.erase(0, 4);
-        title = "[x] \033[9m" + title + "\033[0m";
+        title = "\033[9m" + title + "\033[0m";
+        checkMark = "[x]";
+        status = "Done !";
     }
     void uncheck() {
         isDone = false;
-        title = title.erase(0, 8);
+        title = title.erase(0, 4);
         title = title.erase(title.size() - 4, 4);
-        title = "[ ] " + title;
+        checkMark = "[ ]";
     }
     bool empty() {
         return title.empty();
     }
     void print() {
-        std::cout << title << std::endl;
+        int totalWidth = 24; // Desired width for the title column
+        int titleLen = isDone ? title.length() - 8 : title.length(); // +4 for the check mark and spaces
+        int spaces = totalWidth - titleLen;
+        if (spaces < 0) spaces = 0;
+        std::string padding(spaces, ' ');
+        std::cout << "  " << checkMark << "  | " << title << padding << " | " << status << std::endl;
     }
 
 };
@@ -90,11 +99,13 @@ public:
     }
 
     void printTodos() {
-        std::cout << "************* TODO LIST *************\n";
+        std::cout << "\n\033[4m Check | Title                    | Status      \033[0m\n";
         for (int i = 0; i < count; i++) {
+            std::cout << "       |                          |             \n";
             todos[i].print();
+            std::cout << "\033[4m       |                          |             \033[0m\n";
         }
-        std::cout << "*************************************\n";
+        std::cout << std::endl;
     }
 
     void check(int index) {
